@@ -16,6 +16,7 @@
     "encoding": "^0.1.13",
     "netlify-lambda": "^2.0.14",
     "puppeteer": "^10.4.0",
+    "puppeteer-core": "^10.4.0",
     "redis": "^2.8.0",
     "webpack-node-externals": "^3.0.0"
   }
