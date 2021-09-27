@@ -38,7 +38,7 @@ exports.handler = async (event, context) => {
 
   return {
     statusCode: statusCode,
-    body: json
+    body: JSON.stringify(json, null, 4)
   }
 }
 
