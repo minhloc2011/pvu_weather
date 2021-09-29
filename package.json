@@ -13,10 +13,11 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.10",
     "chrome-aws-lambda": "^10.1.0",
+    "dotenv": "^10.0.0",
     "encoding": "^0.1.13",
     "netlify-lambda": "^2.0.14",
+    "node-telegram-bot-api": "^0.54.0",
     "puppeteer": "^10.4.0",
-    "puppeteer-core": "^10.4.0",
     "redis": "^2.8.0",
     "webpack-node-externals": "^3.0.0"
   }

@@ -1,10 +1,12 @@
 const chromium = require('chrome-aws-lambda')
 const cheerio = require('cheerio')
+const dotenv = require("dotenv").config();
+const { telegramBot } = require("../utils/telegram_bot");
 
 exports.handler = async (event, context) => {
   let browser = null;
   let statusCode;
-  let json;
+  let plantWeathers;
   try {
     const executablePath = await chromium.executablePath
     browser = await chromium.puppeteer.launch({
@@ -19,12 +21,19 @@ exports.handler = async (event, context) => {
     // await page.setViewport({ width: 1200, height: 800 });
     // Goto page and then do stuff
     await page.goto(targetUrl, {
-      waitUntil: ["load", "domcontentloaded", "networkidle0"]
+      waitUntil: ["load", "domcontentloaded", "networkidle0"],
+      timeout: 0
     })
 
     // await autoScroll(page);
-    json = await extractHtml(page);
+    plantWeathers = await extractHtml(page);
+    let messages = '';
+    messages += plantWeathers.map(item => {
+      let useGreenHouse = item.useGreenHouse ? 'Use Green House \uD83D\uDC9A' : 'No Need Green House';
+      return `\uD83C\uDF31 Plant type <b>${item.plantType}</b>: ${useGreenHouse}`;
+    }).join('\n');
 
+    telegramBot.sendMessage('\uD83C\uDF40<b>PlantvsUndead</b>\uD83C\uDF40 <b>Tomorrow Weather</b> \uD83C\uDF26\u26C8\uD83C\uDF24', messages);
     statusCode = 200;
   } catch (err) {
     statusCode = 500;
@@ -38,7 +47,7 @@ exports.handler = async (event, context) => {
 
   return {
     statusCode: statusCode,
-    body: JSON.stringify(json, null, 4)
+    body: 'OK'
   }
 }
 
