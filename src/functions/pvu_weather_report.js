@@ -1,7 +1,7 @@
 const chromium = require('chrome-aws-lambda')
 const cheerio = require('cheerio')
+const https = require("https")
 const dotenv = require("dotenv").config();
-const { telegramBot } = require("../utils/telegram_bot");
 
 exports.handler = async (event, context) => {
   let browser = null;
@@ -33,8 +33,30 @@ exports.handler = async (event, context) => {
       return `\uD83C\uDF31 Plant type <b>${item.plantType}</b>: ${useGreenHouse}`;
     }).join('\n');
 
-    telegramBot.sendMessage('\uD83C\uDF40<b>PlantvsUndead</b>\uD83C\uDF40 <b>Tomorrow Weather</b> \uD83C\uDF26\u26C8\uD83C\uDF24', messages);
-    statusCode = 200;
+    const title = '\uD83C\uDF40<b>PlantvsUndead</b>\uD83C\uDF40 <b>Today Weather</b> \uD83C\uDF26\u26C8\uD83C\uDF24';
+    const telePath = [
+      '/bot',
+      process.env.TELEGRAM_BOT_TOKEN,
+      '/sendMessage?chat_id=',
+      process.env.CHAT_ID,
+      '&parse_mode=html&text=',
+      title + '\n\n' + messages
+    ];
+
+    const options = {
+      hostname: 'api.telegram.org',
+      port: 443,
+      path: encodeURI(telePath.join('')),
+      method: 'GET'
+    }
+    const req = https.request(options, res => {
+      statusCode = res.statusCode;
+    });
+    req.on('error', error => {
+      statusCode = 500;
+    })
+    req.end()
+    
   } catch (err) {
     statusCode = 500;
     console.error('err', err);
